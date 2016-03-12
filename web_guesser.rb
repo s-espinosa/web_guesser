@@ -1,26 +1,40 @@
 require 'sinatra'
 require 'sinatra/reloader'
 
-set :secret_number, rand(100)
+@@secret_number = rand(100)
+@@guesses_remaining = 5
 
 get '/' do
-  guess = params["guess"]
-  message, background = check_guess(guess)
-  erb :index, :locals => {:number => settings.secret_number, :message => message, :background => background}
+  if @@guesses_remaining == 0
+    guess = params["guess"]
+    message, background = check_guess(guess)
+    new_number
+    erb :index, :locals => {:num => @@secret_number, :message => message, :background => background}
+  else
+    guess = params["guess"]
+    message, background = check_guess(guess)
+    @@guesses_remaining -= 1
+    erb :index, :locals => {:num => @@secret_number, :message => message, :background => background}
+  end
 end
 
 def check_guess(guess)
   if guess.nil?
-    ""
-  elsif guess.to_i == settings.secret_number
+    ["", "#FFFFFF"]
+  elsif guess.to_i == @@secret_number
     ["That's correct!", "#337733"]
-  elsif guess.to_i > settings.secret_number + 5
+  elsif guess.to_i > @@secret_number + 5
     ["That guess is way too high", "#aa3333"]
-  elsif guess.to_i < settings.secret_number - 5
+  elsif guess.to_i < @@secret_number - 5
     ["That guess is way too low", "#aa3333"]
-  elsif guess.to_i > settings.secret_number
+  elsif guess.to_i > @@secret_number
     ["That guess is too high", "#aa8888"]
   else
     ["That guess is too low", "#aa8888"]
   end
+end
+
+def new_number
+  @@secret_number = rand(100)
+  @@guesses_remaining = 5
 end
