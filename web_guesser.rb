@@ -5,22 +5,22 @@ set :secret_number, rand(100)
 
 get '/' do
   guess = params["guess"]
-  message = check_guess(guess)
-  erb :index, :locals => {:number => settings.secret_number, :message => message}
+  message, background = check_guess(guess)
+  erb :index, :locals => {:number => settings.secret_number, :message => message, :background => background}
 end
 
 def check_guess(guess)
   if guess.nil?
     ""
   elsif guess.to_i == settings.secret_number
-    "That's correct!"
+    ["That's correct!", "#337733"]
   elsif guess.to_i > settings.secret_number + 5
-    "That guess is way too high"
+    ["That guess is way too high", "#aa3333"]
   elsif guess.to_i < settings.secret_number - 5
-    "That guess is way too low"
+    ["That guess is way too low", "#aa3333"]
   elsif guess.to_i > settings.secret_number
-    "That guess is too high"
+    ["That guess is too high", "#aa8888"]
   else
-    "That guess is too low"
+    ["That guess is too low", "#aa8888"]
   end
 end
