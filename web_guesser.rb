@@ -7,14 +7,16 @@ require 'sinatra/reloader'
 get '/' do
   if @@guesses_remaining == 0
     guess = params["guess"]
+    cheat = params["cheat"]
     message, background = check_guess(guess)
     new_number
-    erb :index, :locals => {:num => @@secret_number, :message => message, :background => background}
+    erb :index, :locals => {:num => @@secret_number, :message => message, :background => background, :cheat => cheat}
   else
     guess = params["guess"]
+    cheat = params["cheat"]
     message, background = check_guess(guess)
     @@guesses_remaining -= 1
-    erb :index, :locals => {:num => @@secret_number, :message => message, :background => background}
+    erb :index, :locals => {:num => @@secret_number, :message => message, :background => background, :cheat => cheat}
   end
 end
 
