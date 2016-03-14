@@ -9,9 +9,12 @@ get '/' do
   cheat = params["cheat"]
   message, background = check_guess(guess)
 
-  @@guesses_remaining == 0 ? new_number : @@guesses_remaining -= 1
+  @@guesses_remaining == 1 ? new_number : @@guesses_remaining -= 1
 
-  erb :index, :locals => {:num => @@secret_number, :message => message, :background => background, :cheat => cheat}
+  erb :index, :locals => {:num => @@secret_number,
+                          :message => message,
+                          :background => background,
+                          :cheat => cheat}
 end
 
 def check_guess(guess)
@@ -20,14 +23,12 @@ def check_guess(guess)
   elsif guess.to_i == @@secret_number
     new_number
     ["That's correct!", "#337733"]
-  elsif guess.to_i > @@secret_number + 5
-    ["That guess is way too high", "#aa3333"]
-  elsif guess.to_i < @@secret_number - 5
-    ["That guess is way too low", "#aa3333"]
-  elsif guess.to_i > @@secret_number
-    ["That guess is too high", "#aa8888"]
+  elsif (guess.to_i - @@secret_number).abs > 5
+    guess.to_i < @@secret_number ? ["That guess is way too low", "#aa3333"] :
+                                   ["That guess is way too high", "#aa3333"]
   else
-    ["That guess is too low", "#aa8888"]
+    guess.to_i < @@secret_number ? ["That guess is too low", "#aa8888"] :
+                                   ["That guess is too high", "#aa8888"]
   end
 end
 
